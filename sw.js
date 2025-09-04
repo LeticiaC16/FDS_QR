@@ -1,4 +1,4 @@
-const cacheName = 'fds-cache-v1';
+const cacheName = 'fds-cache-v2';
 const filesToCache = [
   '/',
   '/index.html',
@@ -18,3 +18,4 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then(response => response || fetch(event.request))
   );
 });
+
