@@ -1,165 +1,172 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Visualizador de FDS Offline</title>
   <style>
+    :root { --azul:#004080; }
+    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
+      margin: 0; font-family: Arial, sans-serif; background:#f5f5f5;
+      display:flex; flex-direction:column; min-height:100vh;
     }
     header {
-      background: #004080;
-      color: white;
-      padding: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
+      position: sticky; top:0; z-index:10;
+      background:var(--azul); color:#fff; padding:10px;
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:space-between;
     }
-    .menu {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    .menu { display:flex; gap:8px; flex-wrap:wrap; }
     button {
-      background: white;
-      color: #004080;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
-      font-size: 15px;
+      background:#fff; color:var(--azul); border:none; padding:10px 14px;
+      border-radius:8px; font-weight:700; cursor:pointer; font-size:16px;
     }
-    button:hover {
-      background: #ddd;
-    }
-    iframe {
-      flex: 1;
-      width: 100%;
-      border: none;
-    }
+    button:active { transform: scale(0.98); }
+    #visor { flex:1; width:100%; border:none; min-height:50vh; }
 
     /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 95%;
-      max-height: 90%;
-      overflow: auto;
-    }
-    .close {
-      color: red;
-      font-size: 22px;
-      font-weight: bold;
-      float: right;
-      cursor: pointer;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 10px;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
-    th, td {
-      padding: 6px;
-      text-align: center;
-    }
-    th {
-      background: #004080;
-      color: white;
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6);
+      z-index:1000; align-items:center; justify-content:center; padding:16px; }
+    .modal-content { background:#fff; border-radius:12px; padding:16px; width:100%; max-width:900px; max-height:90vh; overflow:auto; }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
+    .close { background:transparent; border:none; font-size:28px; color:#c00; cursor:pointer; }
+    .tools { display:flex; gap:8px; flex-wrap:wrap; }
+    input[type="search"] { padding:8px 10px; border:1px solid #ccc; border-radius:8px; min-width:220px; }
+
+    table { width:100%; border-collapse:collapse; }
+    th, td { border:1px solid #ddd; padding:8px; text-align:center; }
+    th { background:var(--azul); color:#fff; position:sticky; top:0; }
+    tr:nth-child(even){ background:#fafafa; }
+
+    @media (max-width:480px){
+      button { font-size:15px; padding:10px 12px; }
+      .modal-content { padding:12px; }
+      th, td { font-size:14px; padding:6px; }
     }
   </style>
 </head>
 <body>
   <header>
-    <span>📄 Selecione o documento:</span>
+    <strong>📄 Selecione o documento:</strong>
     <div class="menu">
       <button onclick="abrirPDF('FDS_ORTONEX_023.pdf')">ORTONEX</button>
       <button onclick="abrirPDF('FDS_HIPOCLORITO_65.pdf')">HIPOCLORITO</button>
       <button onclick="abrirPDF('FDS_TRICLORO.pdf')">TRICLORO</button>
       <button onclick="abrirModal()">ℹ️ Informações</button>
+      <button onclick="atualizarApp()">⟳ Atualizar app</button>
     </div>
   </header>
 
-  <!-- PDF inicial -->
-  <iframe id="visor" src="FDS_ORTONEX_023.pdf"></iframe>
+  <iframe id="visor" src="FDS_ORTONEX_023.pdf" title="Visualizador de PDF"></iframe>
 
   <!-- Modal -->
-  <div id="modal" class="modal">
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloInfo">
     <div class="modal-content">
-      <span class="close" onclick="fecharModal()">&times;</span>
-      <h2>📊 Produtos utilizados em cada sistema</h2>
-      <table>
-        <tr>
-          <th>Sistema de Água</th>
-          <th>TRICLORO 20G</th>
-          <th>ORTOPOLIFOSFATO DE SÓDIO</th>
-          <th>HIPOCLORITO DE CÁLCIO 65%</th>
-        </tr>
-        <tr><td>ETA Cabanos</td><td>X</td><td></td><td></td></tr>
-        <tr><td>Barcarena Sede</td><td>X</td><td></td><td></td></tr>
-        <tr><td>Betânia</td><td>X</td><td></td><td></td></tr>
-        <tr><td>Cafezal</td><td>X</td><td></td><td></td></tr>
-        <tr><td>Conjunto São Francisco</td><td>X</td><td></td><td></td></tr>
-        <tr><td>São Felipe/ Arapari</td><td></td><td></td><td>X</td></tr>
-        <tr><td>Zita Cunha</td><td></td><td></td><td></td></tr>
-        <tr><td>Cuipiranga</td><td></td><td>X</td><td></td></tr>
-        <tr><td>Sirituba</td><td></td><td></td><td></td></tr>
-        <tr><td>Pioneiro</td><td></td><td></td><td></td></tr>
-        <tr><td>São Francisco</td><td></td><td></td><td></td></tr>
-        <tr><td>Sub-prefeitura</td><td></td><td></td><td></td></tr>
-        <tr><td>Caripi</td><td></td><td></td><td></td></tr>
-        <tr><td>Itupanema</td><td></td><td></td><td></td></tr>
-        <tr><td>Conde Industrial</td><td></td><td></td><td></td></tr>
-        <tr><td>Conde Castanheira</td><td></td><td></td><td>X</td></tr>
-        <tr><td>Conde Praça</td><td></td><td>X</td><td></td></tr>
-        <tr><td>ETE Cabanos 1</td><td></td><td></td><td></td></tr>
-        <tr><td>ETE Cabanos 2</td><td></td><td></td><td></td></tr>
-        <tr><td>ETE Pioneiro</td><td>X</td><td></td><td></td></tr>
-      </table>
+      <div class="modal-header">
+        <h2 id="tituloInfo">📊 Produtos utilizados em cada sistema</h2>
+        <div class="tools">
+          <input id="busca" type="search" placeholder="Pesquisar sistema..." oninput="filtrar()" />
+          <button class="close" onclick="fecharModal()" aria-label="Fechar">&times;</button>
+        </div>
+      </div>
+      <div id="tabelaWrap">
+        <!-- Tabela gerada via JS a partir de info.json -->
+      </div>
     </div>
   </div>
 
   <script>
-    function abrirPDF(nomeArquivo) {
-      document.getElementById('visor').src = nomeArquivo;
+    function abrirPDF(nomeArquivo){ document.getElementById('visor').src = nomeArquivo; }
+
+    // Modal + tabela dinâmica
+    let linhasOriginais = [];
+    function abrirModal(){
+      document.getElementById('modal').style.display = 'flex';
+      carregarTabela();
     }
-    function abrirModal() {
-      document.getElementById('modal').style.display = "flex";
-    }
-    function fecharModal() {
-      document.getElementById('modal').style.display = "none";
+    function fecharModal(){ document.getElementById('modal').style.display = 'none'; }
+
+    async function carregarTabela(){
+      try{
+        const res = await fetch('info.json', { cache: 'no-store' }); // força checar versão nova
+        const dados = await res.json();
+        montarTabela(dados);
+      }catch(e){
+        document.getElementById('tabelaWrap').innerHTML =
+          '<p>Não foi possível carregar as informações agora.</p>';
+      }
     }
 
-    // Registrar o Service Worker para offline
+    function montarTabela(dados){
+      const head = `
+        <table id="tabela">
+          <thead>
+            <tr>
+              <th>Sistema de Água</th>
+              <th>TRICLORO 20G</th>
+              <th>ORTOPOLIFOSFATO DE SÓDIO</th>
+              <th>HIPOCLORITO DE CÁLCIO 65%</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>`;
+      document.getElementById('tabelaWrap').innerHTML = head;
+      const tbody = document.querySelector('#tabela tbody');
+      linhasOriginais = dados.map(row => ([
+        row.sistema || '',
+        row.tricloro || '',
+        row.orto || '',
+        row.hipoclorito || ''
+      ]));
+      render(linhasOriginais);
+    }
+
+    function render(linhas){
+      const tbody = document.querySelector('#tabela tbody');
+      tbody.innerHTML = linhas.map(cells => `
+        <tr>${cells.map(c => `<td>${c || ''}</td>`).join('')}</tr>
+      `).join('');
+    }
+
+    function filtrar(){
+      const q = document.getElementById('busca').value.toLowerCase().trim();
+      if(!q){ render(linhasOriginais); return; }
+      const filtradas = linhasOriginais.filter(l => (l[0]||'').toLowerCase().includes(q));
+      render(filtradas);
+    }
+
+    // Service Worker – registre SEM barra inicial no GitHub Pages
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('Service Worker registrado com sucesso!'))
-        .catch(err => console.log('Erro ao registrar Service Worker:', err));
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => {
+          console.log('SW registrado', reg.scope);
+          // Detectar atualização do SW
+          if (reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
+          reg.addEventListener('updatefound', () => {
+            const newSW = reg.installing;
+            newSW?.addEventListener('statechange', () => {
+              if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                // nova versão pronta
+                console.log('Nova versão instalada; recarregue para aplicar.');
+              }
+            });
+          });
+        })
+        .catch(err => console.log('Erro ao registrar SW:', err));
+    }
+
+    // Botão "Atualizar app": limpa caches + força update do SW + recarrega
+    async function atualizarApp(){
+      try {
+        // Apaga todos os caches desta origem
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+        // Força update do SW
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.update()));
+      } finally {
+        location.reload();
+      }
     }
   </script>
 </body>
