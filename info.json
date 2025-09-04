@@ -1,0 +1,22 @@
+[
+  { "sistema": "ETA Cabanos", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+  { "sistema": "Barcarena Sede", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+  { "sistema": "Betânia", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+  { "sistema": "Cafezal", "tricloro": "X", "orto": "", "hipoclorito": "" },
+  { "sistema": "Conjunto São Francisco", "tricloro": "X", "orto": "", "hipoclorito": "" },
+  { "sistema": "São Felipe/ Arapari", "tricloro": "X", "orto": "", "hipoclorito": "" },
+  { "sistema": "Zita Cunha", "tricloro": "", "orto": "", "hipoclorito": "X" },
+  { "sistema": "Cuipiranga", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+  { "sistema": "Sirituba", "tricloro": "X", "orto": "", "hipoclorito": "" },
+  { "sistema": "Pioneiro", "tricloro": "X", "orto": "", "hipoclorito": "" },
+  { "sistema": "São Francisco", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+  { "sistema": "Sub-prefeitura", "tricloro": "X", "orto": "", "hipoclorito": "" },
+  { "sistema": "Caripi", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+  { "sistema": "Itupanema", "tricloro": "X", "orto": "", "hipoclorito": "" },
+  { "sistema": "Conde Industrial", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+  { "sistema": "Conde Castanheira", "tricloro": "", "orto": "", "hipoclorito": "X" },
+  { "sistema": "Conde Praça", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+  { "sistema": "ETE Cabanos 1", "tricloro": "X", "orto": "", "hipoclorito": "" },
+  { "sistema": "ETE Cabanos 2", "tricloro": "X", "orto": "", "hipoclorito": "" },
+  { "sistema": "ETE Pioneiro", "tricloro": "X", "orto": "", "hipoclorito": "" }
+]
