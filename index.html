@@ -45,8 +45,8 @@
       flex: 1;
       width: 100%;
       border: none;
+      background: #fff;
     }
-
     /* Modal */
     .modal {
       display: none;
@@ -98,14 +98,16 @@
   <header>
     <span>📄 Selecione o documento:</span>
     <div class="menu">
-      <button onclick="abrirPDF('FDS_ORTONEX_023.pdf')">ORTONEX</button>
-      <button onclick="abrirPDF('FDS_HIPOCLORITO_65.pdf')">HIPOCLORITO</button>
-      <button onclick="abrirPDF('FDS_TRICLORO.pdf')">TRICLORO</button>
+      <button onclick="mostrarPreview('FDS_ORTONEX_023.pdf')">ORTONEX</button>
+      <button onclick="mostrarPreview('FDS_HIPOCLORITO_65.pdf')">HIPOCLORITO</button>
+      <button onclick="mostrarPreview('FDS_TRICLORO.pdf')">TRICLORO</button>
       <button onclick="abrirModal()">ℹ️ Informações</button>
+      <button onclick="atualizarApp()">🔄 Atualizar App</button>
     </div>
   </header>
 
-  <!-- Removido o iframe inicial porque agora abre em nova aba -->
+  <!-- Área de pré-visualização -->
+  <iframe id="visor" src="FDS_ORTONEX_023.pdf"></iframe>
 
   <!-- Modal -->
   <div id="modal" class="modal">
@@ -144,10 +146,13 @@
   </div>
 
   <script>
-    function abrirPDF(nomeArquivo) {
-      // Abre o PDF em nova aba (funciona no iOS também)
+    // Mostrar preview no iframe
+    function mostrarPreview(nomeArquivo) {
+      document.getElementById('visor').src = nomeArquivo;
+      // Abre o PDF inteiro em outra aba
       window.open(nomeArquivo, '_blank');
     }
+
     function abrirModal() {
       document.getElementById('modal').style.display = "flex";
     }
@@ -155,11 +160,27 @@
       document.getElementById('modal').style.display = "none";
     }
 
-    // Registrar o Service Worker para offline
+    // Registrar o Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('Service Worker registrado com sucesso!'))
-        .catch(err => console.log('Erro ao registrar Service Worker:', err));
+        .then(reg => console.log('Service Worker registrado!', reg))
+        .catch(err => console.log('Erro no Service Worker:', err));
+    }
+
+    // Forçar atualização do Service Worker
+    function atualizarApp() {
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          for (let reg of registrations) {
+            reg.update().then(() => {
+              alert("✅ App atualizado! Recarregando...");
+              location.reload();
+            });
+          }
+        });
+      } else {
+        alert("Nenhum Service Worker ativo encontrado.");
+      }
     }
   </script>
 </body>
