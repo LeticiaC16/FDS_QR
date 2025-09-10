@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -6,6 +7,10 @@
 <style>
   /* Reset básico */
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+  }
 
   body {
     font-family: Arial, sans-serif;
@@ -49,11 +54,11 @@
   button:hover { background: #ddd; }
 
   iframe {
-    flex: 1;
+    flex: 1 1 auto;
     width: 100%;
+    min-height: calc(100vh - 70px); /* Ajusta para o header */
     border: none;
     background: #fff;
-    min-height: 300px;
   }
 
   /* Modal */
@@ -78,6 +83,7 @@
     max-width: 900px;
     max-height: 90%;
     overflow: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   }
 
   .close {
@@ -120,6 +126,7 @@
     header { flex-direction: column; align-items: flex-start; }
     .menu { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
     button { flex: 1 1 45%; margin-bottom: 6px; }
+    iframe { min-height: calc(100vh - 150px); } /* mais espaço para header maior */
   }
 </style>
 </head>
@@ -130,8 +137,8 @@
     <button onclick="mostrarPreview('FDS_ORTONEX_023.pdf')">ORTONEX</button>
     <button onclick="mostrarPreview('FDS_HIPOCLORITO_65.pdf')">HIPOCLORITO</button>
     <button onclick="mostrarPreview('FDS_TRICLORO.pdf')">TRICLORO</button>
-    <button onclick="abrirModal()">ℹ️ Sistemas de Água</button>
-    <button onclick="atualizarApp()">🔄 Atualizar App</button>
+    <button onclick="abrirModal()">ℹ️ Sistemas </button>
+    <button onclick="atualizarApp()">🔄 Atualizar</button>
   </div>
 </header>
 
