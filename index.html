@@ -1,188 +1,243 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Visualizador de FDS Offline</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    header {
-      background: #004080;
-      color: white;
-      padding: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .menu {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    button {
-      background: white;
-      color: #004080;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
-      font-size: 15px;
-    }
-    button:hover {
-      background: #ddd;
-    }
-    iframe {
-      flex: 1;
-      width: 100%;
-      border: none;
-      background: #fff;
-    }
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 95%;
-      max-height: 90%;
-      overflow: auto;
-    }
-    .close {
-      color: red;
-      font-size: 22px;
-      font-weight: bold;
-      float: right;
-      cursor: pointer;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 10px;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
-    th, td {
-      padding: 6px;
-      text-align: center;
-    }
-    th {
-      background: #004080;
-      color: white;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Visualizador de FDS Offline</title>
+<style>
+  /* Reset básico */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #004080;
+    color: white;
+    padding: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  header span { font-weight: bold; }
+
+  .menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  button {
+    background: white;
+    color: #004080;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+    font-size: 15px;
+  }
+
+  button:hover { background: #ddd; }
+
+  iframe {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: #fff;
+    min-height: 300px;
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    padding: 10px;
+  }
+
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90%;
+    overflow: auto;
+  }
+
+  .close {
+    color: red;
+    font-size: 22px;
+    font-weight: bold;
+    float: right;
+    cursor: pointer;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: center;
+  }
+
+  th {
+    background: #004080;
+    color: white;
+  }
+
+  /* Campo de busca */
+  #searchInput {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+
+  /* Responsivo */
+  @media(max-width: 768px){
+    header { flex-direction: column; align-items: flex-start; }
+    .menu { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+    button { flex: 1 1 45%; margin-bottom: 6px; }
+  }
+</style>
 </head>
 <body>
-  <header>
-    <span>📄 Selecione o documento:</span>
-    <div class="menu">
-      <button onclick="mostrarPreview('FDS_ORTONEX_023.pdf')">ORTONEX</button>
-      <button onclick="mostrarPreview('FDS_HIPOCLORITO_65.pdf')">HIPOCLORITO</button>
-      <button onclick="mostrarPreview('FDS_TRICLORO.pdf')">TRICLORO</button>
-      <button onclick="abrirModal()">ℹ️ Informações</button>
-      <button onclick="atualizarApp()">🔄 Atualizar App</button>
-    </div>
-  </header>
+<header>
+  <span>📄 Selecione o documento:</span>
+  <div class="menu">
+    <button onclick="mostrarPreview('FDS_ORTONEX_023.pdf')">ORTONEX</button>
+    <button onclick="mostrarPreview('FDS_HIPOCLORITO_65.pdf')">HIPOCLORITO</button>
+    <button onclick="mostrarPreview('FDS_TRICLORO.pdf')">TRICLORO</button>
+    <button onclick="abrirModal()">ℹ️ Sistemas de Água</button>
+    <button onclick="atualizarApp()">🔄 Atualizar App</button>
+  </div>
+</header>
 
-  <!-- Área de pré-visualização -->
-  <iframe id="visor" src="FDS_ORTONEX_023.pdf"></iframe>
+<!-- Preview PDF -->
+<iframe id="visor" src="FDS_ORTONEX_023.pdf"></iframe>
 
-  <!-- Modal -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="fecharModal()">&times;</span>
-      <h2>📊 Produtos utilizados em cada sistema</h2>
-      <table>
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fecharModal()">&times;</span>
+    <h2>📊 Produtos utilizados em cada sistema</h2>
+    <input type="text" id="searchInput" placeholder="🔍 Buscar sistema...">
+    <table id="sistemasTable">
+      <thead>
         <tr>
           <th>Sistema de Água</th>
           <th>TRICLORO 20G</th>
           <th>ORTOPOLIFOSFATO DE SÓDIO</th>
           <th>HIPOCLORITO DE CÁLCIO 65%</th>
         </tr>
-        <tr><td>ETA Cabanos</td><td>X</td><td></td><td></td></tr>
-        <tr><td>Barcarena Sede</td><td>X</td><td></td><td></td></tr>
-        <tr><td>Betânia</td><td>X</td><td></td><td></td></tr>
-        <tr><td>Cafezal</td><td>X</td><td></td><td></td></tr>
-        <tr><td>Conjunto São Francisco</td><td>X</td><td></td><td></td></tr>
-        <tr><td>São Felipe/ Arapari</td><td></td><td></td><td>X</td></tr>
-        <tr><td>Zita Cunha</td><td></td><td></td><td></td></tr>
-        <tr><td>Cuipiranga</td><td></td><td>X</td><td></td></tr>
-        <tr><td>Sirituba</td><td></td><td></td><td></td></tr>
-        <tr><td>Pioneiro</td><td></td><td></td><td></td></tr>
-        <tr><td>São Francisco</td><td></td><td></td><td></td></tr>
-        <tr><td>Sub-prefeitura</td><td></td><td></td><td></td></tr>
-        <tr><td>Caripi</td><td></td><td></td><td></td></tr>
-        <tr><td>Itupanema</td><td></td><td></td><td></td></tr>
-        <tr><td>Conde Industrial</td><td></td><td></td><td></td></tr>
-        <tr><td>Conde Castanheira</td><td></td><td></td><td>X</td></tr>
-        <tr><td>Conde Praça</td><td></td><td>X</td><td></td></tr>
-        <tr><td>ETE Cabanos 1</td><td></td><td></td><td></td></tr>
-        <tr><td>ETE Cabanos 2</td><td></td><td></td><td></td></tr>
-        <tr><td>ETE Pioneiro</td><td>X</td><td></td><td></td></tr>
-      </table>
-    </div>
+      </thead>
+      <tbody>
+        <!-- Linhas geradas via JS -->
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <script>
-    // Mostrar preview no iframe
-    function mostrarPreview(nomeArquivo) {
-      document.getElementById('visor').src = nomeArquivo;
-      // Abre o PDF inteiro em outra aba
-      window.open(nomeArquivo, '_blank');
-    }
+<script>
+  // JSON da tabela
+  const sistemas = [
+    { "sistema": "ETA Cabanos", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+    { "sistema": "Barcarena Sede", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+    { "sistema": "Betânia", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+    { "sistema": "Cafezal", "tricloro": "X", "orto": "", "hipoclorito": "" },
+    { "sistema": "Conjunto São Francisco", "tricloro": "X", "orto": "", "hipoclorito": "" },
+    { "sistema": "São Felipe/ Arapari", "tricloro": "X", "orto": "", "hipoclorito": "" },
+    { "sistema": "Zita Cunha", "tricloro": "", "orto": "", "hipoclorito": "X" },
+    { "sistema": "Cuipiranga", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+    { "sistema": "Sirituba", "tricloro": "X", "orto": "", "hipoclorito": "" },
+    { "sistema": "Pioneiro", "tricloro": "X", "orto": "", "hipoclorito": "" },
+    { "sistema": "São Francisco", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+    { "sistema": "Sub-prefeitura", "tricloro": "X", "orto": "", "hipoclorito": "" },
+    { "sistema": "Caripi", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+    { "sistema": "Itupanema", "tricloro": "X", "orto": "", "hipoclorito": "" },
+    { "sistema": "Conde Industrial", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+    { "sistema": "Conde Castanheira", "tricloro": "", "orto": "", "hipoclorito": "X" },
+    { "sistema": "Conde Praça", "tricloro": "X", "orto": "X", "hipoclorito": "" },
+    { "sistema": "ETE Cabanos 1", "tricloro": "X", "orto": "", "hipoclorito": "" },
+    { "sistema": "ETE Cabanos 2", "tricloro": "X", "orto": "", "hipoclorito": "" },
+    { "sistema": "ETE Pioneiro", "tricloro": "X", "orto": "", "hipoclorito": "" }
+  ];
 
-    function abrirModal() {
-      document.getElementById('modal').style.display = "flex";
-    }
-    function fecharModal() {
-      document.getElementById('modal').style.display = "none";
-    }
+  // Gerar tabela dinamicamente
+  const tbody = document.querySelector("#sistemasTable tbody");
+  function renderTable(data){
+    tbody.innerHTML = "";
+    data.forEach(item => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${item.sistema}</td>
+                      <td>${item.tricloro}</td>
+                      <td>${item.orto}</td>
+                      <td>${item.hipoclorito}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  renderTable(sistemas);
 
-    // Registrar o Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('Service Worker registrado!', reg))
-        .catch(err => console.log('Erro no Service Worker:', err));
-    }
+  // Busca na tabela
+  document.getElementById("searchInput").addEventListener("input", function(){
+    const term = this.value.toLowerCase();
+    const filtered = sistemas.filter(s => s.sistema.toLowerCase().includes(term));
+    renderTable(filtered);
+  });
 
-    // Forçar atualização do Service Worker
-    function atualizarApp() {
-      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.getRegistrations().then(registrations => {
-          for (let reg of registrations) {
-            reg.update().then(() => {
-              alert("✅ App atualizado! Recarregando...");
-              location.reload();
-            });
-          }
-        });
-      } else {
-        alert("Nenhum Service Worker ativo encontrado.");
-      }
+  // Mostrar preview no iframe e abrir PDF em nova aba
+  function mostrarPreview(nomeArquivo){
+    document.getElementById("visor").src = nomeArquivo;
+    window.open(nomeArquivo, "_blank");
+  }
+
+  function abrirModal(){ document.getElementById("modal").style.display = "flex"; }
+  function fecharModal(){ document.getElementById("modal").style.display = "none"; }
+
+  // Registrar o Service Worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('Service Worker registrado!', reg))
+      .catch(err => console.log('Erro no Service Worker:', err));
+  }
+
+  // Atualizar App
+  function atualizarApp(){
+    if('serviceWorker' in navigator && navigator.serviceWorker.controller){
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        for(let reg of registrations){
+          reg.update().then(()=>{
+            alert("✅ App atualizado! Recarregando...");
+            location.reload();
+          });
+        }
+      });
+    } else {
+      alert("Nenhum Service Worker ativo encontrado.");
     }
-  </script>
+  }
+</script>
 </body>
 </html>
-
