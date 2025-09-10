@@ -1,4 +1,4 @@
-const cacheName = 'fds-cache-v4'; // muda a versão sempre que atualizar
+const cacheName = 'fds-cache-v5'; // muda a versão sempre que atualizar
 const filesToCache = [
   './', // usa ./ em vez de / para funcionar no GitHub Pages e Vercel
   './index.html',
@@ -32,5 +32,6 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
 
 
